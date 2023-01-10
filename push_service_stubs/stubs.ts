@@ -115,8 +115,12 @@ app.post('/push-apns', async (req: Request, res: Response): Promise<void> => {
             callId: obj.call_id,
             from: obj.sip_from_uri,
             sendTime: obj.send_time,
-            incoming_caller_id: cid,
-            incoming_caller_name: obj.sip_from_display
+            
+            alert: { 	
+                incoming_caller_id: cid,
+                incoming_caller_name: obj.sip_from_display,
+                uuid: crypto.randomUUID().toString()
+            }
         },
         "call-id": obj.call_id,
         callId: obj.call_id
