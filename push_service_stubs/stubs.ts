@@ -47,10 +47,10 @@ app.post('/push-apns', async (req: Request, res: Response): Promise<void> => {
     let obj: {
         call_id?: string,
         push_tok?: string,
-        sip_from_uri?: string,
+        sip_from_uri: string,
         sip_from_display?: string,
         send_time?: number
-    } = {};
+    } = {sip_from_uri: 'sip:anonymous@localhost.localdomain'};
 
     try {
         obj = JSON.parse(objData);
