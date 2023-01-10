@@ -103,19 +103,29 @@ app.post('/push-apns', async (req: Request, res: Response): Promise<void> => {
         console.log(responseBuf);
     });
 
-    apnsReq.write(JSON.stringify({
-        callId: obj.call_id,
-        from: obj.sip_from_uri,
-        sendTime: obj.send_time
-    }), 'utf8');
+    const m = obj.sip_from_uri.match(/^sip\:([0-9^@]+)@/);
+    let cid = '0000000000';
 
+    if(m && m.length == 2)
+        cid = m[1]; 
+
+    const dataPayload = {
+        aps: {
+            "call-id": obj.call_id,
+            callId: obj.call_id,
+            from: obj.sip_from_uri,
+            sendTime: obj.send_time,
+            incoming_caller_id: cid,
+            incoming_caller_name: obj.sip_from_display
+        },
+        "call-id": obj.call_id,
+        callId: obj.call_id
+    };
+
+    apnsReq.write(JSON.stringify(dataPayload), 'utf8');
     apnsReq.end();
 
-    console.log(JSON.stringify({
-        callId: obj.call_id,
-        from: obj.sip_from_uri,
-        sendTime: obj.send_time
-    }, null, 2));
+    console.log(JSON.stringify(dataPayload, null, 2));
 
     res.status(200).send({"disposition": "OK"});
 });
