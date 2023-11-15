@@ -1,0 +1,20 @@
+[Unit]
+Description=Kamailio - the Open Source SIP Server
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=kamailio
+Group=kamailio
+Environment='CFGFILE=/etc/kamailio/kamailio.cfg'
+Environment='SHM_MEMORY=64'
+Environment='PKG_MEMORY=8'
+EnvironmentFile=-/etc/sysconfig/kamailio
+ExecStart=/usr/sbin/kamailio --atexit=no -DD -P /run/kamailio/kamailio.pid -f $CFGFILE -m $SHM_MEMORY -M $PKG_MEMORY --substdef="/PUBLIC_IP_ADDR/${PUBLIC_IP_ADDR}/"
+Restart=on-failure
+# necessary for chown of control files e.g. for jsonrpcs and ctl modules
+AmbientCapabilities=CAP_CHOWN
+
+[Install]
+WantedBy=multi-user.target
